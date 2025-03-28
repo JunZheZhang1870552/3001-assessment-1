@@ -151,10 +151,12 @@ while True:
       # originServerRequestHeader is the second line in the request
       # ~~~~ INSERT CODE ~~~~
       originServerRequest = f'GET {resource} HTTP/1.1'
+      originServerRequestHeader = f'Host: {hostname}\r\nConnection: close'
       # ~~~~ END CODE INSERT ~~~~
 
       # Construct the request to send to the origin server
       request = originServerRequest + '\r\n' + originServerRequestHeader + '\r\n\r\n'
+
 
       # Request the web resource from origin server
       print ('Forwarding request to origin server:')
@@ -171,7 +173,13 @@ while True:
 
       # Get the response from the origin server
       # ~~~~ INSERT CODE ~~~~
-      response = originServerSocket.recv(BUFFER_SIZE)
+      response = b''
+      while True:
+          data = originServerSocket.recv(BUFFER_SIZE)
+          if not data:
+              break
+          response += data
+
       # ~~~~ END CODE INSERT ~~~~
 
       # Send the response to the client
